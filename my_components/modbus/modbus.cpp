@@ -35,19 +35,12 @@ void Modbus::loop() {
       ESP_LOGV(TAG, "Clearing buffer of %d bytes - timeout", at);
       this->rx_buffer_.clear();
     }
-
-    // stop blocking new send commands after sent_wait_time_ ms after response received
-    if (now - this->last_send_ > send_wait_time_) {
-      if (waiting_for_response > 0)
-        ESP_LOGV(TAG, "Stop waiting for response from %d", waiting_for_response);
-      waiting_for_response = 0;
-    }
   }
 }
 
 bool Modbus::parse_modbus_byte_(uint8_t byte) {
-  size_t at = this->rx_buffer_.size();
-  this->rx_buffer_.push_back(byte);
+  size_t at = this->rx_buffer_.size(); //at is size BEFORE the new byte is added
+  this->rx_buffer_.push_back(byte);    //so real size is one more
   const uint8_t *raw = &this->rx_buffer_[0];
   ESP_LOGVV(TAG, "Modbus received Byte  %d (0X%x)", byte, byte);
   // Byte 0: modbus address (match all)
@@ -127,33 +120,43 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
     }
   }
   std::vector<uint8_t> data(this->rx_buffer_.begin() + data_offset, this->rx_buffer_.begin() + data_offset + data_len);
-  bool found = false;
-  for (auto *device : this->devices_) {
-    if (device->address_ == address) {
-      // Is it an error response?
-      if ((function_code & 0x80) == 0x80) {
-        ESP_LOGD(TAG, "Modbus error function code: 0x%X exception: %d", function_code, raw[2]);
-        if (waiting_for_response != 0) {
-          device->on_modbus_error(function_code & 0x7F, raw[2]);
+  if (this->role == ModbusRole::SERVER) {
+    this->start_address_=uint16_t(data[1]) | (uint16_t(data[0]) << 8);
+    if (function_code == 0x3 || function_code == 0x4)
+      this->number_of_entities_=uint16_t(data[3]) | (uint16_t(data[2]) << 8);
+    else if (function_code == 0x5 || function_code == 0x06)
+      this->number_of_entities_=1;
+    else
+      this->number_of_entities_=0;
+  }
+  ESP_LOGD(TAG, "good CRC as %s for address=%-5d with FC=%-2d, offset=%d and len=%-3d => start@%d #%d",
+                (this->role == ModbusRole::SERVER)?"server":"client",address,function_code,
+                data_offset,data_len,this->start_address_,this->number_of_entities_);
+  if (this->role == ModbusRole::CLIENT) {
+    bool found = false;
+    for (auto *device : this->devices_) {
+      if (device->address_ == address) {
+        // Is it an error response?
+        if ((function_code & 0x80) == 0x80) {
+          ESP_LOGD(TAG, "Modbus error function code: 0x%X exception: %d", function_code, raw[2]);
+          device->on_modbus_error(function_code & 0x7F, raw[2]); //will replace with on_modbus_message(fc,start_addr,num_reg,err);
         } else {
-          // Ignore modbus exception not related to a pending command
-          ESP_LOGD(TAG, "Ignoring Modbus error - not expecting a response");
+          device->on_modbus_data(data); //will replace with on_modbus_message(fc,start_addr,num_reg,data);
         }
-      } else if (this->role == ModbusRole::SERVER && (function_code == 0x3 || function_code == 0x4)) {
-        device->on_modbus_read_registers(function_code, uint16_t(data[1]) | (uint16_t(data[0]) << 8),
-                                         uint16_t(data[3]) | (uint16_t(data[2]) << 8));
-      } else {
-        device->on_modbus_data(data);
+        found = true;
       }
-      found = true;
+    }
+  
+    if (!found) {
+      ESP_LOGW(TAG, "Got Modbus frame from unknown address 0x%02X! ", address);
     }
   }
-  waiting_for_response = 0;
 
-  if (!found) {
-    ESP_LOGW(TAG, "Got Modbus frame from unknown address 0x%02X! ", address);
-  }
-
+  //flip roles every message, considering CRC OK
+  if (this->role == ModbusRole::SERVER)
+    this->role = ModbusRole::CLIENT;
+  else
+    this->role = ModbusRole::SERVER;
   // reset buffer
   ESP_LOGV(TAG, "Clearing buffer of %d bytes - parse succeeded", at);
   this->rx_buffer_.clear();
