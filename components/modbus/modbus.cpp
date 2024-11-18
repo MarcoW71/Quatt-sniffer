@@ -128,15 +128,15 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
     if (this->current_role_ == ModbusRole::SERVER) {
       this->start_address_=uint16_t(data[1]) | (uint16_t(data[0]) << 8);
       if (function_code == 0x3 || function_code == 0x4)
-        this->number_of_entities_=uint16_t(data[3]) | (uint16_t(data[2]) << 8);
+        this->register_count=uint16_t(data[3]) | (uint16_t(data[2]) << 8);
       else if (function_code == 0x5 || function_code == 0x06)
-        this->number_of_entities_=1;
+        this->register_count=1;
       else
-        this->number_of_entities_=0;
+        this->register_count=0;
     }
     ESP_LOGD(TAG, "good CRC as %s for address=%-5d with FC=%-2d, offset=%d and len=%-3d => start@%d #%d",
                 (this->current_role_ == ModbusRole::SERVER)?"server":"client",address,function_code,
-                data_offset,data_len,this->start_address_,this->number_of_entities_);
+                data_offset,data_len,this->start_address_,this->register_count);
   }
   if (this->current_role_ == ModbusRole::CLIENT) {
     bool found = false;
@@ -145,9 +145,9 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
         // Is it an error response?
         if ((function_code & 0x80) == 0x80) {
           ESP_LOGD(TAG, "Modbus error function code: 0x%X exception: %d", function_code, raw[2]);
-          device->on_modbus_error(function_code & 0x7F, raw[2]); //will replace with on_modbus_message(fc,start_addr,num_reg,err);
+          device->on_modbus_error(function_code & 0x7F, raw[2]); //TODO: will replace with on_modbus_message_error?(fc,start_addr,num_reg,err);
         } else {
-          device->on_modbus_data(data); //will replace with on_modbus_message(fc,start_addr,num_reg,data);
+          device->on_modbus_message(function_code, this->start_address_, this->register_count, data);
         }
         found = true;
       }

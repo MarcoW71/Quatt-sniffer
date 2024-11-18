@@ -40,8 +40,9 @@ logger:
   level: DEBUG
   logs:
     uart_debug: DEBUG                  ## toon uart_debug data wel
-    modbus: DEBUG                      ## onderdruk log-berichten van modbus
-    modbus_controller.sensor: ERROR    ## onderdruk log-berichten van modbus_controller
+    modbus: ERROR                      ## onderdruk log-berichten van modbus
+    modbus_controller.sensor: ERROR    ## onderdruk log-berichten van modbus_controller.sensor
+    modbus_controller: ERROR           ## onderdruk log-berichten van modbus_controller
 
 # Configuratie van UART op Quatt modbus connectie-parameters
 uart:                 ## Igor Ybema: The RS485 is connected to the ESP32-C3 via hardware uart, rx/tx (gpio20/gpio21).

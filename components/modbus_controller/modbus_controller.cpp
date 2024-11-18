@@ -79,6 +79,22 @@ void ModbusController::on_modbus_data(const std::vector<uint8_t> &data) {
   }
 }
 
+// Queue incoming message
+void ModbusController::on_modbus_message(uint8_t function_code, uint16_t start_address,
+                                          uint16_t register_count, std::vector<uint8_t> &data) {
+  //TODO: Consider some throttle system
+  //TODO: Consider to make a list of detected messages for dump_config to share
+  auto fc=(ModbusFunctionCode)function_code;
+  auto message = ModbusCommandItem::create_message(this, fc, start_address, register_count);
+
+  if (fc==ModbusFunctionCode::WRITE_SINGLE_REGISTER) //remove 2 address bytes from data
+    data.erase(data.begin(),data.begin()+2);
+  message.payload = data;
+  // Move the message to the response queue
+  this->incoming_queue_.push(make_unique<ModbusCommandItem>(message));
+  ESP_LOGV(TAG, "Modbus message queued");
+}
+
 // Dispatch the response to the registered handler
 void ModbusController::process_modbus_data_(const ModbusCommandItem *response) {
   ESP_LOGV(TAG, "Process modbus response for address 0x%X size: %zu", response->register_address,
@@ -222,15 +238,17 @@ void ModbusController::update_range_(RegisterRange &r) {
 // Once we get a response to the command it is removed from the queue and the next command is send
 //
 void ModbusController::update() {
-  if (!this->command_queue_.empty()) {
-    ESP_LOGV(TAG, "%zu modbus commands already in queue", this->command_queue_.size());
-  } else {
-    ESP_LOGV(TAG, "Updating modbus component");
-  }
+  if (this->parent_->role != modbus::ModbusRole::SNIFFER) {
+    if (!this->command_queue_.empty()) {
+      ESP_LOGV(TAG, "%zu modbus commands already in queue", this->command_queue_.size());
+    } else {
+      ESP_LOGV(TAG, "Updating modbus component");
+    }
 
-  for (auto &r : this->register_ranges_) {
-    ESP_LOGVV(TAG, "Updating range 0x%X", r.start_address);
-    update_range_(r);
+    for (auto &r : this->register_ranges_) {
+      ESP_LOGVV(TAG, "Updating range 0x%X", r.start_address);
+      update_range_(r);
+    }
   }
 }
 
@@ -375,8 +393,10 @@ void ModbusController::loop() {
     incoming_queue_.pop();
 
   } else {
-    // all messages processed send pending commands
-    send_next_command_();
+    if (this->parent_->role != modbus::ModbusRole::SNIFFER) {
+      // all messages processed send pending commands
+      send_next_command_();
+    }
   }
 }
 
@@ -391,6 +411,21 @@ void ModbusController::dump_sensors_() {
     ESP_LOGV(TAG, "  Sensor start=0x%X count=%d size=%d offset=%d", it->start_address, it->register_count,
              it->get_register_size(), it->offset);
   }
+}
+
+ModbusCommandItem ModbusCommandItem::create_message(ModbusController *modbusdevice, ModbusFunctionCode function_code,
+                                                    uint16_t start_address, uint16_t register_count) {
+  ModbusCommandItem cmd;
+  cmd.modbusdevice = modbusdevice;
+  cmd.register_type = modbus_function_to_register_type(function_code);
+  cmd.function_code = function_code;
+  cmd.register_address = start_address;
+  cmd.register_count = register_count;
+  cmd.on_data_func = [modbusdevice](ModbusRegisterType register_type, uint16_t start_address,
+                                    const std::vector<uint8_t> &data) {
+    modbusdevice->on_register_data(register_type, start_address, data);
+  };
+  return cmd;
 }
 
 ModbusCommandItem ModbusCommandItem::create_read_command(

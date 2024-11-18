@@ -12,6 +12,10 @@ Any reponse that passes CRC is sent up to modbus_controller in on_modbus_message
 
 ### History
 
+#### 0.1.0 sniffing seems to work
+- rudimentary sniff for fc 3 and 6
+- ToDo: throttle, inventory, error, style guidelines
+
 #### 0.0.6 introduced sniffer as a role
 - this will steer behavior of the underlying systems
 

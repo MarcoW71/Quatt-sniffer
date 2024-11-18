@@ -99,6 +99,22 @@ inline ModbusFunctionCode modbus_register_write_function(ModbusRegisterType reg_
       break;
   }
 }
+inline ModbusRegisterType modbus_function_to_register_type(ModbusFunctionCode function_code) {
+  switch (function_code) { //TODO: expand to other FunctionCodes
+    case ModbusFunctionCode::READ_HOLDING_REGISTERS: //0x03
+      return ModbusRegisterType::HOLDING;
+      break;
+    case ModbusFunctionCode::READ_INPUT_REGISTERS:   //0x04
+      return ModbusRegisterType::READ;
+      break;
+    case ModbusFunctionCode::WRITE_SINGLE_REGISTER:  //0x06
+      return ModbusRegisterType::HOLDING;
+      break;
+    default:
+      return ModbusRegisterType::CUSTOM;
+      break;
+  }
+}
 
 inline uint8_t c_to_hex(char c) { return (c >= 'A') ? (c >= 'a') ? (c - 'a' + 10) : (c - 'A' + 10) : (c - '0'); }
 
@@ -325,6 +341,16 @@ class ModbusCommandItem {
   bool should_retry(uint8_t max_retries) { return this->send_count_ <= max_retries; };
 
   /// factory methods
+  /** Create modbus sniffer command
+   *  Function code 03, 04, 06
+   * @param modbusdevice pointer to the device to execute the command
+   * @param function_code modbus function code for the sniff command
+   * @param start_address modbus address of the first register to read
+   * @param register_count number of registers to read
+   * @return ModbusCommandItem with the prepared command
+   */
+  static ModbusCommandItem create_message(ModbusController *modbusdevice, ModbusFunctionCode function_code,
+                                          uint16_t start_address, uint16_t register_count);
   /** Create modbus read command
    *  Function code 02-04
    * @param modbusdevice pointer to the device to execute the command
@@ -442,6 +468,8 @@ class ModbusController : public PollingComponent, public modbus::ModbusDevice {
   void add_server_register(ServerRegister *server_register) { server_registers_.push_back(server_register); }
   /// called when a modbus response was parsed without errors
   void on_modbus_data(const std::vector<uint8_t> &data) override;
+  /// called when a sniffed modbus message was parsed without errors
+  void on_modbus_message(uint8_t function_code, uint16_t start_address, uint16_t register_count, std::vector<uint8_t> &data) override;
   /// called when a modbus error response was received
   void on_modbus_error(uint8_t function_code, uint8_t exception_code) override;
   /// called when a modbus request (function code 3 or 4) was parsed without errors
