@@ -31,7 +31,7 @@ external_components:
   # use all components from a local folder
   - source:
       type: local
-      path: my_components
+      path: components
     components: [ modbus, modbus_controller]
 
 # Enable logging
