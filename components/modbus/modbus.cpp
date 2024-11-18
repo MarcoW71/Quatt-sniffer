@@ -8,6 +8,10 @@ namespace modbus {
 static const char *const TAG = "modbus";
 
 void Modbus::setup() {
+  if (this->current_role_ == ModbusRole::SNIFFER)
+    this->current_role_ = ModbusRole::SERVER;
+  else
+    this->current_role_ = this->role;
   if (this->flow_control_pin_ != nullptr) {
     this->flow_control_pin_->setup();
   }
@@ -81,7 +85,7 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
 
   } else {
     // data starts at 2 and length is 4 for read registers commands
-    if (this->role == ModbusRole::SERVER && (function_code == 0x3 || function_code == 0x4)) {
+    if (this->current_role_ == ModbusRole::SERVER && (function_code == 0x3 || function_code == 0x4)) {
       data_offset = 2;
       data_len = 4;
     }
@@ -120,19 +124,21 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
     }
   }
   std::vector<uint8_t> data(this->rx_buffer_.begin() + data_offset, this->rx_buffer_.begin() + data_offset + data_len);
-  if (this->role == ModbusRole::SERVER) {
-    this->start_address_=uint16_t(data[1]) | (uint16_t(data[0]) << 8);
-    if (function_code == 0x3 || function_code == 0x4)
-      this->number_of_entities_=uint16_t(data[3]) | (uint16_t(data[2]) << 8);
-    else if (function_code == 0x5 || function_code == 0x06)
-      this->number_of_entities_=1;
-    else
-      this->number_of_entities_=0;
-  }
-  ESP_LOGD(TAG, "good CRC as %s for address=%-5d with FC=%-2d, offset=%d and len=%-3d => start@%d #%d",
-                (this->role == ModbusRole::SERVER)?"server":"client",address,function_code,
+  if (this->role == ModbusRole::SNIFFER) {
+    if (this->current_role_ == ModbusRole::SERVER) {
+      this->start_address_=uint16_t(data[1]) | (uint16_t(data[0]) << 8);
+      if (function_code == 0x3 || function_code == 0x4)
+        this->number_of_entities_=uint16_t(data[3]) | (uint16_t(data[2]) << 8);
+      else if (function_code == 0x5 || function_code == 0x06)
+        this->number_of_entities_=1;
+      else
+        this->number_of_entities_=0;
+    }
+    ESP_LOGD(TAG, "good CRC as %s for address=%-5d with FC=%-2d, offset=%d and len=%-3d => start@%d #%d",
+                (this->current_role_ == ModbusRole::SERVER)?"server":"client",address,function_code,
                 data_offset,data_len,this->start_address_,this->number_of_entities_);
-  if (this->role == ModbusRole::CLIENT) {
+  }
+  if (this->current_role_ == ModbusRole::CLIENT) {
     bool found = false;
     for (auto *device : this->devices_) {
       if (device->address_ == address) {
@@ -153,10 +159,12 @@ bool Modbus::parse_modbus_byte_(uint8_t byte) {
   }
 
   //flip roles every message, considering CRC OK
-  if (this->role == ModbusRole::SERVER)
-    this->role = ModbusRole::CLIENT;
-  else
-    this->role = ModbusRole::SERVER;
+  if (this->role == ModbusRole::SNIFFER) {
+    if (this->current_role_ == ModbusRole::SERVER)
+      this->current_role_ = ModbusRole::CLIENT;
+    else
+      this->current_role_ = ModbusRole::SERVER;
+  }
   // reset buffer
   ESP_LOGV(TAG, "Clearing buffer of %d bytes - parse succeeded", at);
   this->rx_buffer_.clear();
@@ -188,7 +196,7 @@ void Modbus::send(uint8_t address, uint8_t function_code, uint16_t start_address
   std::vector<uint8_t> data;
   data.push_back(address);
   data.push_back(function_code);
-  if (this->role == ModbusRole::CLIENT) {
+  if (this->current_role_ == ModbusRole::CLIENT) {
     data.push_back(start_address >> 8);
     data.push_back(start_address >> 0);
     if (function_code != 0x5 && function_code != 0x6) {
@@ -198,7 +206,7 @@ void Modbus::send(uint8_t address, uint8_t function_code, uint16_t start_address
   }
 
   if (payload != nullptr) {
-    if (this->role == ModbusRole::SERVER || function_code == 0xF || function_code == 0x10) {  // Write multiple
+    if (this->current_role_ == ModbusRole::SERVER || function_code == 0xF || function_code == 0x10) {  // Write multiple
       data.push_back(payload_len);  // Byte count is required for write
     } else {
       payload_len = 2;  // Write single register or coil

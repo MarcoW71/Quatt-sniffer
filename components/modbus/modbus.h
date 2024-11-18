@@ -11,6 +11,7 @@ namespace modbus {
 enum ModbusRole {
   CLIENT,
   SERVER,
+  SNIFFER,
 };
 
 class ModbusDevice;
@@ -43,6 +44,7 @@ class Modbus : public uart::UARTDevice, public Component {
  protected:
   GPIOPin *flow_control_pin_{nullptr};
 
+  ModbusRole current_role_;
   bool parse_modbus_byte_(uint8_t byte);
   uint16_t send_wait_time_{250};
   bool disable_crc_;

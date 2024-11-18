@@ -12,6 +12,9 @@ Any reponse that passes CRC is sent up to modbus_controller in on_modbus_message
 
 ### History
 
+#### 0.0.6 introduced sniffer as a role
+- this will steer behavior of the underlying systems
+
 #### 0.0.5 use optimized register range
 - makes a single read-range that matches the quatt read command
 - using git works now as expected in 0.0.4

@@ -62,6 +62,7 @@ uart:                 ## Igor Ybema: The RS485 is connected to the ESP32-C3 via 
 modbus:
   uart_id: uart_bus
   id: mod_bus
+  role: sniffer
 
 # Configuratie modbus_controller voor wegschrijven Quatt modbus-data uit uart naar HA-sensoren
 modbus_controller:
