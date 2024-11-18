@@ -12,6 +12,10 @@ Any reponse that passes CRC is sent up to modbus_controller in on_modbus_message
 
 ### History
 
+#### 0.1.1 updated YAML to meaningful register names
+- also updated min and max values which were too restrictive
+- ToDo: split 2108 in separate bits, and maybe also 2119-2121 Status bits
+
 #### 0.1.0 sniffing seems to work
 - rudimentary sniff for fc 3 and 6
 - ToDo: throttle, inventory, error, style guidelines
