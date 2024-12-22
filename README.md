@@ -12,6 +12,17 @@ Any reponse that passes CRC is sent up to modbus_controller in on_modbus_message
 
 ### History
 
+#### 0.1.4 Added register 2108 full next to bits
+- full register and bits can exist side by side
+- added HP2 as a clone of HP1, but commented
+- zapped some gremlins
+
+#### Update quatt-sniffer.yaml (#1)
+- Defrost to binary sensor
+- Some HA icons added
+- Range of Evaporator pressure increased
+- Add some binary sensors (protections) for register 2119
+
 #### 0.1.2 added expansion of bits in register 2108
 - bit2 is floor_heating
 - bit11 is pump_running
