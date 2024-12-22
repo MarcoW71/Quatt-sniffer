@@ -47,29 +47,28 @@ logger:
     modbus_controller.sensor: ERROR    ## onderdruk log-berichten van modbus_controller.sensor
     modbus_controller: ERROR           ## onderdruk log-berichten van modbus_controller
 
-# Configuratie van UART op Quatt modbus connectie-parameters
+# Configuration of UART with Quatt modbus connection-parameters
 uart:                 ## Igor Ybema: The RS485 is connected to the ESP32-C3 via hardware uart, rx/tx (gpio20/gpio21).
   id: uart_bus
   # tx_pin: GPIO21    ## just listening: tx_pin not specified  BUT must kill TX output hardware trace anyway!
   rx_pin: GPIO23      ## on ESP32C3 use GPIO20, on ESP32 use GPIO23
-  baud_rate: 19200    ## start bit na 52us: 19200 baud zie https://discord.com/chann...24364/1232080954466631761
+  baud_rate: 19200    ## start bit after 52us: 19200 baud see https://discord.com/chann...24364/1232080954466631761
   data_bits: 8
   parity: EVEN
   stop_bits: 1
 
-# Configuratie modbus in ESPHome
 modbus:
   uart_id: uart_bus
   id: mod_bus
   role: sniffer
 
-# Configuratie modbus_controller voor wegschrijven Quatt modbus-data uit uart naar HA-sensoren
 modbus_controller:
 - id: modbus_device_1
-  address: 1               ## address of the Modbus slave device on the bus
+  address: 1               ## address of Quatt HP1 on the bus
   modbus_id: mod_bus
+# # HP2 =====================================================================
 # - id: modbus_device_2
-#   address: 2               ## address of the Modbus slave device on the bus
+#   address: 2               ## address of Quatt HP2 on the bus
 #   modbus_id: mod_bus
 
 substitutions:
@@ -135,7 +134,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
   state_class: "measurement"
   accuracy_decimals: 1
   filters:
-    - throttle: ${throttling_value}
+    #- throttle: ${throttling_value}
     - multiply: 1
     - clamp:
         min_value: 0

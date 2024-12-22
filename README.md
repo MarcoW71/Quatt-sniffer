@@ -1,16 +1,61 @@
 # Quatt-sniffer  (c) 2024 M10tech
 
-My first attempt to create a ESPhome component
+Purpose of this repo is to sniff info from the Quatt modbus interface into HomeAssistant
 
-Purpose is to get info from the Quatt modbus into HomeAssistant
+Reusing the framework of modbus and modbus_controller we introduce the role `sniffer`  
+By using the `register_count` concept, we create the same register-ranges as are present on the bus.  
+For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 
-My current idea is to clone modbus and make it catch all messages on the bus, both commands and responses.
+## Setup
+- disable the physical TX hardware in case your RS485-board does not have an explicit TX pin (aka auto TX mode)!!!
+- for best preformance, remove a 120 ohm resistor between A and B that might be present in the sniffer board
+- likewise, a pull-up to Vcc and pull down resistor to GND will decrease reliability of the CiC-Quatt communication!
+- start with creating (_but do not install!_) a new device named `quatt-sniffer`  
+- this will have a default template content with secrets in it
+- capture the various secrets in the secrets.yaml file as QMB_api, QMB_ota and QMB_AP
+- copy the ESP32 board model string
+- replace the entire content with the `quatt-sniffer.yaml` file in this repo.
+- set back the ESP32 board model and verify GPIO pin to be used for UART-RX-pin
+- if you have a Quatt-DUO, un-comment all the registers for `HP2` (three sections!)
+- install, BUT choose manual download and abort that if you are not ready yet
+- if the compiling went well, upload to your device, else debug
+- carefully, first switch off Quatt, then unplug Quatt and then CiC
+- connect the A, B and G from CiC to the device
+- power up ESP, CiC and Quatt and check that Quatt-app/json interface works properly for half an hour
+- meanwhile, select QMBus-device in history and check that info comes in every second
+- NOW, if you feel like tuning, you can change as you like
+- if a new version of the repo is available, you can re-copy or update the yaml and recompile + install
 
-Then clone modbus_controller and make it pipe selected registers into HA, provided by the modbus component.
+### Coding strategy
+The idea is to override `modbus` and make it catch all messages on the bus, both commands and responses.  
+By flipping between actual_role of `client` and `server` we connect the register range available in the
+command with the response.  
+Any reponse that passes CRC is sent up to `modbus_controller` in `on_modbus_message(FC,start_addr,reg_count,data)`  
+The override of `modbus_controller` creates a `ModbusCommandItem` in the `incoming_queue_` and the standard
+processing takes care of sending the selected registers into HA.
 
-Any reponse that passes CRC is sent up to modbus_controller in on_modbus_message(fc,start_addr,num_reg,data)
+These two override components are not compatible with the originals anymore,  
+however, the intent is that it would be possible to merge them again.  
+As such, this would then become an extension of the originals.  
+If time and demand come together, this might happen.
+
+### Use this for other modbus machines
+Say you want to use this for some other bus, not Quatt.  
+Remove (or comment) all of the register definitions and enable verbose logging  
+If your bus is active you could see messages like this:
+```
+[18:20:59][D][modbus:141]: good CRC as server for address=1     with FC=6 , offset=2 and len=4   => start@2015 #1
+[18:20:59][D][modbus:141]: good CRC as client for address=1     with FC=6 , offset=2 and len=4   => start@2015 #1
+[18:20:59][D][modbus:141]: good CRC as server for address=1     with FC=3 , offset=2 and len=4   => start@2099 #40
+[18:20:59][D][modbus:141]: good CRC as client for address=1     with FC=3 , offset=3 and len=80  => start@2099 #40
+```
+Use all this information to set up the registers in the yaml to match what happens on the bus.  
+Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 0.7.0 Updated Readme with instructions and overview
+- version now 0.7.0 to reflect that we are on our way to 1.0.0
 
 #### 0.1.4 Added register 2108 full next to bits
 - full register and bits can exist side by side
