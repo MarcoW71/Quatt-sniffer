@@ -371,17 +371,17 @@ void ModbusController::dump_config() {
                   static_cast<uint8_t>(it->register_type), it->start_address, it->offset, it->register_count,
                   it->get_register_size());
   }
-  ESP_LOGCONFIG(TAG, "ranges");
-  for (auto &it : register_ranges_) {
-    ESP_LOGCONFIG(TAG, "  Range type=%zu start=0x%X count=%d skip_updates=%d", static_cast<uint8_t>(it.register_type),
-                  it.start_address, it.register_count, it.skip_updates);
-  }
   ESP_LOGCONFIG(TAG, "server registers");
   for (auto &r : server_registers_) {
     ESP_LOGCONFIG(TAG, "  Address=0x%02X value_type=%zu register_count=%u", r->address,
                   static_cast<uint8_t>(r->value_type), r->register_count);
   }
 #endif
+  ESP_LOGCONFIG(TAG, "ranges");
+  for (auto &it : register_ranges_) {
+    ESP_LOGCONFIG(TAG, "  Range type=%zu start=0x%X count=%d skip_updates=%d", static_cast<uint8_t>(it.register_type),
+                  it.start_address, it.register_count, it.skip_updates);
+  }
 }
 
 void ModbusController::loop() {

@@ -54,6 +54,12 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.7.1 Report ranges, other_bits and logging levels
+- dump_config now shows configured modbus_controller register ranges
+- Register2108 unidentified bits now a separate sensor
+- speculative descriptive names for bits (verify...)
+- logging levels to WARN or DEBUG for better feedback
+
 #### 0.7.0 Updated Readme with instructions and overview
 - version now 0.7.0 to reflect that we are on our way to 1.0.0
 
