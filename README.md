@@ -54,6 +54,12 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.7.2 new bit in R2108
+- split off bit3 from R2108
+- fixed other_bits concept
+- not sure anymore of bit4 is crankcase heater
+- cosmetic changes as suggested by PR#2
+
 #### 0.7.1 Report ranges, other_bits and logging levels
 - dump_config now shows configured modbus_controller register ranges
 - Register2108 unidentified bits now a separate sensor

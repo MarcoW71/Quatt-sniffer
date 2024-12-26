@@ -35,24 +35,25 @@ external_components:
       #type: local
       #path: components
     components: [ modbus, modbus_controller]
+    #refresh: 5min  ## use this temporarily if you recently updated the repo, else disable for default 24h
 
 # Enable logging
 logger:
-  #baud_rate: 0                         ## Igor Ybema: make sure to turn of logging via UART (set baudrate to 0) as the RS485 uses the onboard UART (tx/rx)
-  #however, in sniffer mode and with detached TX hardware trace this is not needed
+  #baud_rate: 0                         ## Turn off logging via UART (set baudrate to 0) in case the RS485 uses the onboard UART (tx/rx)
+                                        ## However, in sniffer mode and with detached TX hardware trace this is not needed
   level: DEBUG
   logs:
-    uart_debug: ERROR                  ## suppress log-messages from uart
-    modbus: WARN                       ## suppress log-messages from modbus
-    modbus_controller.sensor: WARN     ## suppress log-messages from modbus_controller.sensor
-    sensor: WARN                       ## suppress log-messages from modbus_controller
+    uart_debug: ERROR                   ## suppress log-messages from uart
+    modbus: WARN                        ## suppress log-messages from modbus
+    modbus_controller.sensor: WARN      ## suppress log-messages from modbus_controller.sensor
+    sensor: WARN                        ## suppress log-messages from modbus_controller
 
 # Configuration of UART with Quatt modbus connection-parameters
-uart:                 ## Igor Ybema: The RS485 is connected to the ESP32-C3 via hardware uart, rx/tx (gpio20/gpio21).
+uart:
   id: uart_bus
   # tx_pin: GPIO21    ## just listening: tx_pin not specified  BUT must kill TX output hardware trace anyway!
   rx_pin: GPIO23      ## on ESP32C3 use GPIO20, on ESP32 use GPIO23
-  baud_rate: 19200    ## start bit after 52us: 19200 baud see https://discord.com/chann...24364/1232080954466631761
+  baud_rate: 19200
   data_bits: 8
   parity: EVEN
   stop_bits: 1
@@ -247,7 +248,9 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
   name: "HP1 - R2108_other_bits"
   register_type: holding
   address: 2108
-  bitmask: 0xf78a   ## all the remaining bits
+  bitmask: 0xf782   ## all the remaining bits
+  filters:
+    - multiply: 2   ## due to bitmask doing mask_and_shift_by_rightbit our mask divides by 2 which we undo
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
@@ -670,7 +673,9 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 #   name: "HP2 - R2108_other_bits"
 #   register_type: holding
 #   address: 2108
-#   bitmask: 0xf78a   ## all the remaining bits
+#   bitmask: 0xf782   ## all the remaining bits
+#   filters:
+#     - multiply: 2   ## due to bitmask doing mask_and_shift_by_rightbit our mask divides by 2 which we undo
 # 
 # - platform: modbus_controller
 #   modbus_controller_id: modbus_device_2
@@ -941,7 +946,13 @@ binary_sensor:
   bitmask: 0x4
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b4_crankcase_heater"
+  name: "HP1 - R2108b3_???"
+  register_type: holding
+  address: 2108
+  bitmask: 0x8
+- platform: modbus_controller
+  modbus_controller_id: modbus_device_1
+  name: "HP1 - R2108b4_crankcase_heater?"
   register_type: holding
   address: 2108
   bitmask: 0x10
@@ -1031,13 +1042,19 @@ binary_sensor:
 #   bitmask: 0x4
 # - platform: modbus_controller
 #   modbus_controller_id: modbus_device_2
-#   name: "HP2 - R2108b4_crankcase_heater"
+#   name: "HP2 - R2108b3_???"
+#   register_type: holding
+#   address: 2108
+#   bitmask: 0x8
+# - platform: modbus_controller
+#   modbus_controller_id: modbus_device_2
+#   name: "HP2 - R2108b4_crankcase_heater?"
 #   register_type: holding
 #   address: 2108
 #   bitmask: 0x10
 # - platform: modbus_controller
 #   modbus_controller_id: modbus_device_2
-#   name: "HP2 - R2108b0_comp_high_fan"
+#   name: "HP2 - R2108b5_comp_high_fan"
 #   register_type: holding
 #   address: 2108
 #   bitmask: 0x20
