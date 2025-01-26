@@ -54,6 +54,11 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.8.0 Apply ESPHome packages for easier user configurations and updates
+- minor improvements as well, e.g.
+- throttling_value applied to all values from main substitution value
+- incorporate pull request PR#7547 which solves missing updates
+
 #### 0.7.3 merged changes from 2024.10.3 - 2024.12.2
 - affects the modbus_controller component
 - no overlap with the sniffer functions
