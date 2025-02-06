@@ -54,6 +54,10 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.8.1 hide support yaml files
+- starting with dot makes them invisible to esphome
+- only relevant to the developer
+
 #### 0.8.0 Apply ESPHome packages for easier user configurations and updates
 - minor improvements as well, e.g.
 - throttling_value applied to all values from main substitution value
