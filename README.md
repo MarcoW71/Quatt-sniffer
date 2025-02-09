@@ -54,6 +54,13 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.8.2 fine tuning the reported registers
+- board type is now a package which includes the right GPIO pin
+- version of firmware R2122 is now reported
+- renamed R2108b3 to crankcase heater (it is not bit4)
+- temperature clamping always minimum -30
+- now minor version will only be updated if the C++ code is updated
+
 #### 0.8.1 hide support yaml files
 - starting with dot makes them invisible to esphome
 - only relevant to the developer

@@ -1,0 +1,7 @@
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+substitutions:
+  uart_rx_pin: GPIO20

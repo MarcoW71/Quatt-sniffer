@@ -1,7 +1,7 @@
 esphome:
   project:
     name: "Tweakers.Quatt Modbus sniffer"
-    version: "v0.8"
+    version: "v0.8.2"
 
 external_components:
   # use all components from GitHub repository
@@ -229,9 +229,11 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
   filters:
     - multiply: 2   ## due to bitmask doing mask_and_shift_by_rightbit our mask divides by 2 which we undo
 
+## we cannot remove this register since this will mess up the previous bitmask register, so internal=true
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
   name: "HP1 - EV1 steps"
+  internal: true
   register_type: holding
   address: 2109
   unit_of_measurement: "p"
@@ -295,7 +297,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
     - offset: -3000
     - multiply: 0.01
     - clamp:
-        min_value: 0
+        min_value: -30
         max_value: 150
         ignore_out_of_range: true
 
@@ -372,7 +374,13 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
   name: "HP1 - Status bits 3"
   register_type: holding
   address: 2121
-  register_count: 10 ## fill gap for 2122-2130
+
+- platform: modbus_controller
+  modbus_controller_id: modbus_device_1
+  name: "HP1 - Firmware version"
+  register_type: holding
+  address: 2122
+  register_count: 9 ## fill gap for 2123-2130
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
@@ -388,7 +396,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
     - offset: -3000
     - multiply: 0.01
     - clamp:
-        min_value: 0
+        min_value: -30
         max_value: 100
         ignore_out_of_range: true
 
@@ -424,7 +432,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
     - offset: -3000
     - multiply: 0.01
     - clamp:
-        min_value: 0
+        min_value: -30
         max_value: 100
         ignore_out_of_range: true
 
@@ -442,7 +450,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
     - offset: -3000
     - multiply: 0.01
     - clamp:
-        min_value: 0
+        min_value: -30
         max_value: 100
         ignore_out_of_range: true
 
@@ -461,7 +469,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
     - offset: -3000
     - multiply: 0.01
     - clamp:
-        min_value: 0
+        min_value: -30
         max_value: 100
         ignore_out_of_range: true
 
@@ -509,13 +517,13 @@ binary_sensor:
   bitmask: 0x4
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b3_???"
+  name: "HP1 - R2108b3_crankcase_heater"
   register_type: holding
   address: 2108
   bitmask: 0x8
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b4_crankcase_heater?"
+  name: "HP1 - R2108b4_???"
   register_type: holding
   address: 2108
   bitmask: 0x10

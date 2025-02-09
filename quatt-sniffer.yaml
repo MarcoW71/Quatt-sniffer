@@ -2,10 +2,7 @@ esphome:
   name: quatt-sniffer
   friendly_name: QMBus
 
-esp32:
-  board: esp32dev
-  framework:
-    type: arduino
+#esp32:  select right package below
 
 # Enable Home Assistant API
 api:
@@ -22,14 +19,15 @@ wifi:
 
 substitutions:
   throttling_value: 10s    ##When set to 0s, new reading every second!
-  uart_rx_pin: GPIO20     ## on ESP32C3 use GPIO20, on ESP32 use e.g. GPIO23
+  #uart_rx_pin: GPIOxx     ## select if you override the package value, ESP32C3->GPIO20, ESP32->GPIO23
 
 packages:
-  HP1:
-    url: https://github.com/M10tech/Quatt-sniffer
-    files: [.quatt-sniffer-HP1.yaml]
-  ##Uncomment lines below in case you have a Quatt Duo
-  # HP2:
-  #   url: https://github.com/M10tech/Quatt-sniffer
-  #   files: [.quatt-sniffer-HP2.yaml]
-
+  ##Uncomment line below that represents your chipset
+  # ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32C3.yaml
+  # ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32.yaml
+  HP1: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP1.yaml
+  ##Uncomment line below in case you have a Quatt Duo
+  # HP2: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP2.yaml
+  ##Below is for the developer to test before commiting to github
+  # ESP: !include .quatt-sniffer-ESP32.yaml
+  # HP1: !include .quatt-sniffer-HP1.yaml
