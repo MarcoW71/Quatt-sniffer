@@ -9,22 +9,31 @@ For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 ## Setup
 - disable the physical TX hardware in case your RS485-board does not have an explicit TX pin (aka auto TX mode)!!!
 - for best preformance, remove a 120 ohm resistor between A and B that might be present in the sniffer board
-- likewise, a pull-up to Vcc and pull down resistor to GND will decrease reliability of the CiC-Quatt communication!
+- likewise, remove a pull-up to Vcc and pull down resistor to GND which might decrease reliability of the CiC-Quatt communication!
 - start with creating (_but do not install!_) a new device named `quatt-sniffer`  
 - this will have a default template content with secrets in it
 - capture the various secrets in the secrets.yaml file as QMB_api, QMB_ota and QMB_AP
-- copy the ESP32 board model string
 - replace the entire content with the `quatt-sniffer.yaml` file in this repo.
-- set back the ESP32 board model and verify GPIO pin to be used for UART-RX-pin
-- if you have a Quatt-DUO, un-comment all the registers for `HP2` (three sections!)
-- install, BUT choose manual download and abort that if you are not ready yet
-- if the compiling went well, upload to your device, else debug
-- carefully, first switch off Quatt, then unplug Quatt and then CiC
-- connect the A, B and G from CiC to the device
+- select the ESP32 board model in the packages section by uncommenting one line
+- verify GPIO pin to be used for UART-RX-pin
+- if you have a Quatt-DUO, un-comment the line for `HP2`
+- save the config and install, BUT choose manual download and abort that if you are not ready yet
+- if the compiling went well, upload to your device via USB, else debug
+- carefully, first switch off Quatt by lowering the thermostat, then unplug Quatt and then CiC
+- connect the A, B and G from CiC to the device, in the same connector that goes to the CiC
+- preferrably use cables less than a meter long and try to twist them together..
 - power up ESP, CiC and Quatt and check that Quatt-app/json interface works properly for half an hour
-- meanwhile, select QMBus-device in history and check that info comes in every second
+- meanwhile, select QMBus-device in history and check that info comes in every second (or at throttle speed)
 - NOW, if you feel like tuning, you can change as you like
-- if a new version of the repo is available, you can re-copy or update the yaml and recompile + install
+- if a new version of the repo is available, you can re-copy or update the `quatt-sniffer.yaml` and recompile + install
+
+#### example setup
+![](https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-foto.jpg)  
+Red arrows: removal or 120 ohm (R2) and pull-up/down (R1/R3)  
+Green arrow: RX will light every second if a message comes in. TX should NOT light!  
+Yellow line: board model [available here](https://www.tindie.com/products/thehognl/esp32-c3-with-rs485-modbus-and-optional-touch-tft/?pt=ac_prod_search)
+
+ESP32 with [RS485 board](https://www.aliexpress.com/item/1005006727769995.html) also works...
 
 ### Coding strategy
 The idea is to override `modbus` and make it catch all messages on the bus, both commands and responses.  
@@ -38,6 +47,15 @@ These two override components are not compatible with the originals anymore,
 however, the intent is that it would be possible to merge them again.  
 As such, this would then become an extension of the originals.  
 If time and demand come together, this might happen.
+
+There is an improvement that allows high volume sensor updates without missing data.  
+For now that gets loaded as a PR, but should become part of ESPhome core one day...
+
+### What does it all mean
+There are 40 registers that get read and 4 registers that send orders to the Quatt.
+Not all read registers are known for their meaning, and of those many are static over all time observed.
+
+todo: all the descriptions
 
 ### Use this for other modbus machines
 Say you want to use this for some other bus, not Quatt.  
@@ -53,6 +71,8 @@ Use all this information to set up the registers in the yaml to match what happe
 Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 0.8.2+ cosmetic updates and instructions
 
 #### 0.8.2 fine tuning the reported registers
 - board type is now a package which includes the right GPIO pin

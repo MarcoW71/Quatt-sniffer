@@ -19,15 +19,17 @@ wifi:
 
 substitutions:
   throttling_value: 10s    ##When set to 0s, new reading every second!
-  #uart_rx_pin: GPIOxx     ## select if you override the package value, ESP32C3->GPIO20, ESP32->GPIO23
+  #uart_rx_pin: GPIOxx     ## select if you override the package value
 
 packages:
-  ##Uncomment line below that represents your chipset
-  # ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32C3.yaml
-  # ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32.yaml
-  HP1: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP1.yaml
-  ##Uncomment line below in case you have a Quatt Duo
-  # HP2: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP2.yaml
-  ##Below is for the developer to test before commiting to github
-  # ESP: !include .quatt-sniffer-ESP32.yaml
-  # HP1: !include .quatt-sniffer-HP1.yaml
+  ## Uncomment one ESP-line below that represents your chipset
+  #ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32C3.yaml ## Uses GPIO20
+  #ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32.yaml   ## Uses GPIO23
+  #
+  HP1: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP1.yaml ## Always needed
+  #HP2: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP2.yaml
+  ## Uncomment the line above in case you have a Quatt Duo (HP1+HP2)
+  #
+  ## Below is for the developer to test before commiting to github
+  #ESP: !include .quatt-sniffer-ESP32.yaml
+  #HP1: !include .quatt-sniffer-HP1.yaml
