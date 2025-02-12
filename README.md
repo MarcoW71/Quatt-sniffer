@@ -8,7 +8,7 @@ For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 
 ## Setup
 - disable the physical TX hardware in case your RS485-board does not have an explicit TX pin (aka auto TX mode)!!!
-- for best preformance, remove a 120 ohm resistor between A and B that might be present in the sniffer board
+- for best performance, remove a 120 ohm resistor between A and B that might be present in the sniffer board
 - likewise, remove a pull-up to Vcc and pull down resistor to GND which might decrease reliability of the CiC-Quatt communication!
 - start with creating (_but do not install!_) a new device named `quatt-sniffer`  
 - this will have a default template content with secrets in it
@@ -20,7 +20,7 @@ For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 - save the config and install, BUT choose manual download and abort that if you are not ready yet
 - if the compiling went well, upload to your device via USB, else debug
 - carefully, first switch off Quatt by lowering the thermostat, then unplug Quatt and then CiC
-- connect the A, B and G from CiC to the device, in the same connector that goes to the CiC
+- connect the A, B and G from CiC to the device, in the same connector that goes to the Quatt
 - preferrably use cables less than a meter long and try to twist them together..
 - power up ESP, CiC and Quatt and check that Quatt-app/json interface works properly for half an hour
 - meanwhile, select QMBus-device in history and check that info comes in every second (or at throttle speed)
@@ -29,9 +29,11 @@ For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 
 #### example setup
 ![](https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-foto.jpg)  
-Red arrows: removal or 120 ohm (R2) and pull-up/down (R1/R3)  
+Red arrows: removal of 120 ohm (R2) and pull-up/down (R1/R3)  
 Green arrow: RX will light every second if a message comes in. TX should NOT light!  
-Yellow line: board model [available here](https://www.tindie.com/products/thehognl/esp32-c3-with-rs485-modbus-and-optional-touch-tft/?pt=ac_prod_search)
+Yellow line: board model [available here](https://www.tindie.com/products/thehognl/esp32-c3-with-rs485-modbus-and-optional-touch-tft/?pt=ac_prod_search)  
+![](https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-noTX.jpg)  
+Cut this trace to disable TX  
 
 ESP32 with [RS485 board](https://www.aliexpress.com/item/1005006727769995.html) also works...
 
@@ -71,6 +73,9 @@ Use all this information to set up the registers in the yaml to match what happe
 Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 0.8.2++ final cosmetics
+- verified there are no changes between esphome versions 2024.12.2 and 2024.12.4 for the local components
 
 #### 0.8.2+ cosmetic updates and instructions
 
