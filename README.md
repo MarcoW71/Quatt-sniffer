@@ -31,11 +31,50 @@ For Quatt, there are four write commands (FC=6) and one read command (FC=3)
 ![](https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-foto.jpg)  
 Red arrows: removal of 120 ohm (R2) and pull-up/down (R1/R3)  
 Green arrow: RX will light every second if a message comes in. TX should NOT light!  
-Yellow line: board model [available here](https://www.tindie.com/products/thehognl/esp32-c3-with-rs485-modbus-and-optional-touch-tft/?pt=ac_prod_search)  
-![](https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-noTX.jpg)  
+Yellow line: board model [available here](https://www.tindie.com/products/thehognl/esp32-c3-with-rs485-modbus-and-optional-touch-tft/)  
+<img src="https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Sniffer-Ybema-noTX.jpg" width="200" />  
 Cut this trace to disable TX  
+Note that not removing the 3 resistors is not breaking the system right away, but it is easy enough, so just do it.  
+If you don't have a solder iron, just cut a gap in them with a cutter, with care.
 
 ESP32 with [RS485 board](https://www.aliexpress.com/item/1005006727769995.html) also works...
+
+### What does it all mean
+There are 40 registers that get read and 4 registers that send orders to the Quatt.  
+Not all read registers are known for their meaning, and of those many are static over all time observed.
+
+A _mode_ is either on or off  
+A _level_ can take discrete values, but is not directly a physical unit  
+A _demand_ is the translation of a level to a physical unit  
+And then there is the _actual_ measurement of the device delivering that unit  
+
+| Register | Sensor name                  | Register | Sensor name                  |
+| :---     | :--------------------------- | :---     | :--------------------------- |
+| R3999    | CiC sets Working Mode        | R2010    | CiC sets Pump Mode           |
+| R1999    | CiC sets Compressor Level    | R2015    | CiC sets Pump Level          |
+| R2099    | Working Mode                 | R2116    | Evaporator Pressure          |
+| R2100    | Compressor AC Voltage        | R2117    | Condenser Pressure           |
+| R2101    | Compressor AC Current        | R2118b0  | Defrost Mode                 |
+| R2102    | Compressor Frequency Demand  | R2119b0  | Alarm - Main Line Current    |
+| R2103    | Compressor Frequency Actual  | R2119b3  | Info - Compressor Oil Return |
+| R2104    | Fan Speed Maximum            | R2119b4  | Alarm - High Pressure Switch |
+| R2105    | Fan Speed Actual             | R2119b6  | Alarm - 1st Start Pre-heat   |
+| R2107    | Electric Expansion Valve     | R2119b9  | Alarm - AC High/Low Voltage  |
+| R2108b0  | Low Fan Speed Mode           | R2119b12 | Alarm - Low Pressure Switch  |
+| R2108b2  | Bottom Heater                | R2119    | Status bits R2019            |
+| R2108b3  | Crankcase Heater             | R2120    | Status bits R2020            |
+| R2108b4  | Defrost Fan Speed Mode       | R2121    | Status bits R2021            |
+| R2108b5  | High Fan Speed Mode          | R2122    | Firmware Version             |
+| R2108b6  | 4way Valve                   | R2131    | Condensing Temperature       |
+| R2108b11 | Pump Relay                   | R2132    | Evaporating Temperature      |
+| R2108bx  | Other bits R2108             | R2133    | Water In Temperature         |
+| R2110    | Outside Temperature          | R2134    | Water Out Temperature        |
+| R2111    | Evaporator Coil Temperature  | R2135    | Inner Coil Temperature       |
+| R2112    | Gas Discharge Temperature    | R2137    | Pump Power                   |
+| R2113    | Gas Return Temperature       | R2138    | Pump Flow                    |
+
+<img src="https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Concepts.png" width="400" />  
+This is a schematic diagram that tries to provide a guide to the various items mentioned above
 
 ### Coding strategy
 The idea is to override `modbus` and make it catch all messages on the bus, both commands and responses.  
@@ -53,12 +92,6 @@ If time and demand come together, this might happen.
 There is an improvement that allows high volume sensor updates without missing data.  
 For now that gets loaded as a PR, but should become part of ESPhome core one day...
 
-### What does it all mean
-There are 40 registers that get read and 4 registers that send orders to the Quatt.
-Not all read registers are known for their meaning, and of those many are static over all time observed.
-
-todo: all the descriptions
-
 ### Use this for other modbus machines
 Say you want to use this for some other bus, not Quatt.  
 Remove (or comment) all of the register definitions and enable verbose logging  
@@ -73,6 +106,9 @@ Use all this information to set up the registers in the yaml to match what happe
 Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 0.8.2+++ description of sensor names draft
+- to receive feedback before applying to actual sensors
 
 #### 0.8.2++ final cosmetics
 - verified there are no changes between esphome versions 2024.12.2 and 2024.12.4 for the local components
