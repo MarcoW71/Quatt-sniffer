@@ -60,9 +60,9 @@ And then there is the _actual_ measurement of the device delivering that unit
 | R2104    | Fan Speed Maximum            | R2119b4  | Alarm - High Pressure Switch |
 | R2105    | Fan Speed Actual             | R2119b6  | Alarm - 1st Start Pre-heat   |
 | R2107    | Electric Expansion Valve     | R2119b9  | Alarm - AC High/Low Voltage  |
-| R2108b0  | Low Fan Speed Mode           | R2119b12 | Alarm - Low Pressure Switch  |
-| R2108b2  | Bottom Heater                | R2119    | Status bits R2019            |
-| R2108b3  | Crankcase Heater             | R2120    | Status bits R2020            |
+| R2108b2  | Bottom Heater                | R2119b12 | Alarm - Low Pressure Switch  |
+| R2108b3  | Crankcase Heater             | R2119    | Status bits R2019            |
+| R2108b0  | Low Fan Speed Mode           | R2120    | Status bits R2020            |
 | R2108b4  | Defrost Fan Speed Mode       | R2121    | Status bits R2021            |
 | R2108b5  | High Fan Speed Mode          | R2122    | Firmware Version             |
 | R2108b6  | 4way Valve                   | R2131    | Condensing Temperature       |
@@ -73,8 +73,13 @@ And then there is the _actual_ measurement of the device delivering that unit
 | R2112    | Gas Discharge Temperature    | R2137    | Pump Power                   |
 | R2113    | Gas Return Temperature       | R2138    | Pump Flow                    |
 
-<img src="https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Concepts.png" width="400" />  
-This is a schematic diagram that tries to provide a guide to the various items mentioned above
+<img src="https://github.com/M10tech/Quatt-sniffer/blob/main/Quatt-Concepts.png" width="600" />  
+
+This is a schematic diagram that tries to provide a guide to the various items mentioned above.  
+Also the Condensing and Evaporating Temperature are derived from the respective pressures and
+are a [physical property of the R32 cooling agent](https://www.vymeniky-tepla.cz/files/pdf/r32-pt-chart.pdf). They are not physical temperature sensors.
+
+The Status bits are uncertain, and there is no easy way to find out the more obscure ones.
 
 ### Coding strategy
 The idea is to override `modbus` and make it catch all messages on the bus, both commands and responses.  
@@ -106,6 +111,8 @@ Use all this information to set up the registers in the yaml to match what happe
 Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 0.8.2++++ more description fine tuning
 
 #### 0.8.2+++ description of sensor names draft
 - to receive feedback before applying to actual sensors
