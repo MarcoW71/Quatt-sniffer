@@ -1,7 +1,7 @@
 esphome:
   project:
     name: "Tweakers.Quatt Modbus sniffer"
-    version: "v0.8.2"
+    version: "v0.9.0"
 
 external_components:
   # use all components from GitHub repository
@@ -52,7 +52,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 ## first, there are 4 individual write commands
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - cmd_compressorlevel"
+  name: "HP1 - Compressor Level set by CiC"
   register_type: holding
   address: 1999    ## address of the register inside the Quatt outdoor unit
   state_class: "measurement"
@@ -65,13 +65,13 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - cmd_pumpmode"
+  name: "HP1 - Pump Mode set by CiC"
   register_type: holding
   address: 2010
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - cmd_pumplevel"
+  name: "HP1 - Pump Level set by CiC"
   register_type: holding
   address: 2015
   state_class: "measurement"
@@ -85,7 +85,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - cmd_workmode"
+  name: "HP1 - Working Mode set by CiC"
   register_type: holding
   address: 3999
 
@@ -93,13 +93,13 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 ## https://esphome.io/components/modbus_controller#optimizing-modbus-communications
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Workmode"
+  name: "HP1 - Working Mode Actual"
   register_type: holding
   address: 2099
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - AC voltage"
+  name: "HP1 - Compressor AC Voltage"
   register_type: holding
   address: 2100
   unit_of_measurement: "V"
@@ -116,7 +116,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - AC current"
+  name: "HP1 - Compressor AC Current"
   register_type: holding
   address: 2101
   unit_of_measurement: "A"
@@ -133,7 +133,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Compressor frequency demand"
+  name: "HP1 - Compressor Frequency Demand"
   register_type: holding
   address: 2102
   unit_of_measurement: "Hz"
@@ -150,7 +150,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Compressor frequency"
+  name: "HP1 - Compressor Frequency Actual"
   register_type: holding
   address: 2103
   unit_of_measurement: "Hz"
@@ -168,7 +168,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Fan speed max"
+  name: "HP1 - Fan Speed Maximum"
   icon: mdi:fan
   register_type: holding
   address: 2104
@@ -186,7 +186,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Fan speed"
+  name: "HP1 - Fan Speed Actual"
   icon: mdi:fan
   register_type: holding
   address: 2105
@@ -205,7 +205,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - EEV steps"
+  name: "HP1 - Electric Expansion Valve"
   register_type: holding
   address: 2107
   unit_of_measurement: "p"
@@ -222,7 +222,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 ## Some of the register 2108 status bits placed into binary sensors in the next section
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108_other_bits"
+  name: "HP1 - Other bits R2108"
   register_type: holding
   address: 2108
   bitmask: 0xf782   ## all the remaining bits
@@ -249,7 +249,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Outside temperature"
+  name: "HP1 - Outside Temperature"
   register_type: holding
   address: 2110
   unit_of_measurement: "°C"
@@ -267,7 +267,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Evaporator coil temperature"
+  name: "HP1 - Evaporator Coil Temperature"
   register_type: holding
   address: 2111
   unit_of_measurement: "°C"
@@ -285,7 +285,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Gas discharge temperature"
+  name: "HP1 - Gas Discharge Temperature"
   register_type: holding
   address: 2112
   unit_of_measurement: "°C"
@@ -303,7 +303,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Gas return temperature"
+  name: "HP1 - Gas Return Temperature"
   register_type: holding
   address: 2113
   register_count: 3 ## fill gap for 2114-2115
@@ -322,7 +322,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Evaporator pressure"
+  name: "HP1 - Evaporator Pressure"
   register_type: holding
   address: 2116
   unit_of_measurement: "bar"
@@ -339,7 +339,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Condenser pressure"
+  name: "HP1 - Condenser Pressure"
   register_type: holding
   address: 2117
   unit_of_measurement: "bar"
@@ -359,32 +359,38 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 ## Some of the register 2119 status bits placed into binary sensors in the next section
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Status bits 1"
+  name: "HP1 - Status bits R2119"
   register_type: holding
   address: 2119
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Status bits 2"
+  name: "HP1 - Status bits R2120"
   register_type: holding
   address: 2120
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Status bits 3"
+  name: "HP1 - Status bits R2121"
   register_type: holding
   address: 2121
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Firmware version"
+  name: "HP1 - Firmware Version"
   register_type: holding
   address: 2122
-  register_count: 9 ## fill gap for 2123-2130
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Condensing temperature"
+  name: "HP1 - EEPROM Version"
+  register_type: holding
+  address: 2123
+  register_count: 8 ## fill gap for 2124-2130
+
+- platform: modbus_controller
+  modbus_controller_id: modbus_device_1
+  name: "HP1 - Condensing Temperature"
   register_type: holding
   address: 2131
   unit_of_measurement: "°C"
@@ -402,7 +408,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Evaporating temperature"
+  name: "HP1 - Evaporating Temperature"
   register_type: holding
   address: 2132
   unit_of_measurement: "°C"
@@ -420,7 +426,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Water in temperature"
+  name: "HP1 - Water In Temperature"
   register_type: holding
   address: 2133
   unit_of_measurement: "°C"
@@ -438,7 +444,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Water out temperature"
+  name: "HP1 - Water Out Temperature"
   register_type: holding
   address: 2134
   unit_of_measurement: "°C"
@@ -456,7 +462,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Inner coil temperature"
+  name: "HP1 - Condenser Coil Temperature"
   register_type: holding
   address: 2135
   register_count: 2 ## fill gap for 2136
@@ -488,7 +494,7 @@ sensor: ## remember this setup MUST match the commands that a CIC sends to a Qua
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Flow"
+  name: "HP1 - Pump Flow"
   register_type: holding
   address: 2138
   unit_of_measurement: "L/h"
@@ -505,50 +511,50 @@ binary_sensor:
 ## at least bits 0,2,4,5,6,11 are used for status in R2108
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b0_comp_low_fan"
+  name: "HP1 - Fan Low Speed Mode" #R2108b0
   register_type: holding
   address: 2108
   bitmask: 0x1
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b2_bottom_heater"
+  name: "HP1 - Bottom Heater" #R2108b2
   register_type: holding
   address: 2108
   bitmask: 0x4
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b3_crankcase_heater"
+  name: "HP1 - Crankcase Heater" #R2108b3
   register_type: holding
   address: 2108
   bitmask: 0x8
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b4_???"
+  name: "HP1 - Fan Defrost Speed Mode" #R2108b4
   register_type: holding
   address: 2108
   bitmask: 0x10
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b5_comp_high_fan"
+  name: "HP1 - Fan High Speed Mode" #R2108b5
   register_type: holding
   address: 2108
   bitmask: 0x20
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b6_4way_valve"
+  name: "HP1 - 4way Valve" #R2108b6
   register_type: holding
   address: 2108
   bitmask: 0x40
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2108b11 DC_Pump_Relay"
+  name: "HP1 - Pump Relay" #R2108b11
   register_type: holding
   address: 2108
   bitmask: 0x800
 
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - R2118_Defrost"
+  name: "HP1 - Defrost Mode" #R2118b0
   icon: mdi:snowflake
   register_type: holding
   address: 2118
@@ -556,42 +562,42 @@ binary_sensor:
 ##Selection of register 2119 status bits put into binary sensors
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - Main line current"
+  name: "HP1 - Alarm - Main Line Current" #R2119b0
   icon: mdi:message-alert
   register_type: holding
   address: 2119
   bitmask: 0x1
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - Compressor oil return"
+  name: "HP1 - Info - Compressor Oil Return" #R2119b3
   icon: mdi:message-alert
   register_type: holding
   address: 2119
   bitmask: 0x8
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - High Pressure switch"
+  name: "HP1 - Alarm - High Pressure Switch" R2119b4
   icon: mdi:message-alert
   register_type: holding
   address: 2119
   bitmask: 0x10
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - 1st start pre-heat"
+  name: "HP1 - Alarm - 1st Start Pre-heat" #R2119b6
   icon: mdi:message-alert
   register_type: holding
   address: 2119
   bitmask: 0x40
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - AC high/low voltage"
+  name: "HP1 - Alarm - AC High/Low Voltage" #R2119b9
   icon: mdi:message-alert
   register_type: holding
   address: 2119
   bitmask: 0x200
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Protection - Low pressure switch"
+  name: "HP1 - Alarm - Low Pressure Switch" #R2119b12
   icon: mdi:message-alert
   register_type: holding
   address: 2119
