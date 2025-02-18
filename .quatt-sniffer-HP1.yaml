@@ -576,7 +576,7 @@ binary_sensor:
   bitmask: 0x8
 - platform: modbus_controller
   modbus_controller_id: modbus_device_1
-  name: "HP1 - Alarm - High Pressure Switch" R2119b4
+  name: "HP1 - Alarm - High Pressure Switch" #R2119b4
   icon: mdi:message-alert
   register_type: holding
   address: 2119

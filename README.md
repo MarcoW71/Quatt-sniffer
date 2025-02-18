@@ -112,6 +112,9 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 0.9.1 release candidate two
+- fixed typo in R2119b4
+
 #### 0.9.0 release candidate one
 - updated sensor names in yaml files
 - added EEPROM version
