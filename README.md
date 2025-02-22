@@ -112,6 +112,11 @@ Do not forget to disable verbose logging once you have an idea of the registers.
 
 ### History
 
+#### 1.0.0 official release
+- components got version 1.0.X but have not changed
+
+=================
+
 #### 0.9.1 release candidate two
 - fixed typo in R2119b4
 
