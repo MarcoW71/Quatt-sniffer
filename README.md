@@ -1,4 +1,4 @@
-# Quatt-sniffer  (c) 2024 M10tech
+# Quatt-sniffer  (c) 2024-2025 M10tech
 
 Purpose of this repo is to sniff info from the Quatt modbus interface into HomeAssistant
 
@@ -94,8 +94,8 @@ however, the intent is that it would be possible to merge them again.
 As such, this would then become an extension of the originals.  
 If time and demand come together, this might happen.
 
-There is an improvement that allows high volume sensor updates without missing data.  
-For now that gets loaded as a PR, but should become part of ESPhome core one day...
+There was an issue that did not allow high volume sensor updates without missing data.
+This was solved in ESPhome since 2025.3.0
 
 ### Use this for other modbus machines
 Say you want to use this for some other bus, not Quatt.  
@@ -111,6 +111,10 @@ Use all this information to set up the registers in the yaml to match what happe
 Do not forget to disable verbose logging once you have an idea of the registers...
 
 ### History
+
+#### 1.1.0 sync with 2025.5.0 situation
+- removed PR7547 reference since that is now part of release 2025.3.0 and later
+- updated components to match changes up to release 2025.5.0
 
 #### 1.0.0 official release
 - components got version 1.0.X but have not changed

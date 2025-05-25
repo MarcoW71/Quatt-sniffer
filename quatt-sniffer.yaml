@@ -1,6 +1,7 @@
 esphome:
   name: quatt-sniffer
   friendly_name: QMBus
+  min_version: "2025.3.0"
 
 #esp32:  select right package below
 

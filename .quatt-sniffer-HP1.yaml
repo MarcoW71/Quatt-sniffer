@@ -1,7 +1,7 @@
 esphome:
   project:
     name: "Tweakers.Quatt Modbus sniffer"
-    version: "v1.0.0"
+    version: "v1.1.0"
 
 external_components:
   # use all components from GitHub repository
@@ -12,8 +12,6 @@ external_components:
       #path: components
     components: [ modbus, modbus_controller ]
     #refresh: 5min  ## use this temporarily if you recently updated the repo, else disable for default 24h
-  - source: github://pr#7547
-    components: [ api, event ]
 
 # Enable logging
 logger:
