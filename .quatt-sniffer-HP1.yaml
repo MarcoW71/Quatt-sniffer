@@ -21,7 +21,7 @@ logger:
   logs:
     uart_debug: ERROR                   ## suppress log-messages from uart
     modbus: WARN                        ## suppress log-messages from modbus
-    modbus_controller.sensor: WARN      ## suppress log-messages from modbus_controller.sensor
+    modbus_controller.sensor: DEBUG      ## suppress log-messages from modbus_controller.sensor
     sensor: WARN                        ## suppress log-messages from modbus_controller
 
 
