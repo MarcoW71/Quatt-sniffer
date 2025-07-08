@@ -4,4 +4,4 @@ esp32:
     type: arduino
 
 substitutions:
-  uart_rx_pin: GPIO06
+  uart_rx_pin: GPIO06  ## isolated RS-485 transceiver

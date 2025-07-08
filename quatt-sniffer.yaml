@@ -28,7 +28,7 @@ packages:
   #ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32.yaml   ## Uses GPIO23
   #ESP: github://M10tech/Quatt-sniffer/.quatt-sniffer-ESP32S3.yaml ## Uses GPIO06 (MarcoW71 isolated modbus sniffer)
   #
-  HP1: github://MarcoW71/Quatt-sniffer/.quatt-sniffer-HP1.yaml ## Always needed
+  HP1: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP1.yaml ## Always needed
   #HP2: github://M10tech/Quatt-sniffer/.quatt-sniffer-HP2.yaml
   ## Uncomment the line above in case you have a Quatt Duo (HP1+HP2)
   #
