@@ -22,7 +22,7 @@ logger:
     uart_debug: ERROR                   ## suppress log-messages from uart
     modbus: DEBUG                        ## suppress log-messages from modbus
     modbus_controller.sensor: DEBUG      ## suppress log-messages from modbus_controller.sensor
-    sensor: WARN                        ## suppress log-messages from modbus_controller
+    sensor: DEBUG                        ## suppress log-messages from modbus_controller
 
 
 # Configuration of UART with Quatt modbus connection-parameters
