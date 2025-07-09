@@ -17,7 +17,7 @@ external_components:
 logger:
   #baud_rate: 0                         ## Turn off logging via UART (set baudrate to 0) in case the RS485 uses the onboard UART (tx/rx)
                                         ## However, in sniffer mode and with detached TX hardware trace this is not needed
-  level: DEBUG
+  level: VERBOSE
   logs:
     uart_debug: ERROR                   ## suppress log-messages from uart
     modbus: DEBUG                        ## suppress log-messages from modbus
