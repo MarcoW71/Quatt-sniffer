@@ -20,9 +20,9 @@ logger:
   level: VERBOSE
   logs:
     uart_debug: ERROR                   ## suppress log-messages from uart
-    modbus: DEBUG                        ## suppress log-messages from modbus
-    modbus_controller.sensor: DEBUG      ## suppress log-messages from modbus_controller.sensor
-    sensor: DEBUG                        ## suppress log-messages from modbus_controller
+    modbus: VERBOSE                        ## suppress log-messages from modbus
+    modbus_controller.sensor: VERBOSE      ## suppress log-messages from modbus_controller.sensor
+    sensor: VERBOSE                        ## suppress log-messages from modbus_controller
 
 
 # Configuration of UART with Quatt modbus connection-parameters
